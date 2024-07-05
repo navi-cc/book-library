@@ -18,6 +18,10 @@
     --status-pending-color: rgb(230, 11, 11);
 }
 
+li {
+    list-style: none;
+}
+
 body {
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -49,6 +53,8 @@ main {
     display: flex;
     flex-direction: column;
     padding: 40px;
+
+    position: relative;
 }
 
 
@@ -62,7 +68,7 @@ main {
     display: flex;
     flex-direction: column;
 
-    padding: 10px 20px;
+    padding: 20px 25px;
     background-color: rgb(255, 255, 255);
     box-shadow: rgba(24, 83, 245, 0.882) 0px 0px 0px 2px;   
 
@@ -93,12 +99,11 @@ main {
     top: 8px;
     right: 8px;
 
-    width: 15px;
-    aspect-ratio: 1;
-
+    width: 60%;
+    height: 10px;
     border-radius: 50px;
-
     background-color: var(--status-finish-color);
+
 }
 
 .book-status.finish {
@@ -115,21 +120,23 @@ main {
 }
 
 .book-author {
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
+
 
 .mark-as-read {
     display: flex;
-    align-items: center;
     gap: 0px 5px;
 
-    margin-top: 20px;
-    align-self: flex-end;
+    position: absolute;
+    bottom: 8.9px;
+    right: 8px;
 }
 
-.book-author, .book > .mark-as-read {
+.book-author, .book > .mark-as-read, .number-of-page {
     font-family: var(--font-roboto-bold);
-    font-size: .8rem;
+    font-size: .75rem;
     color: rgb(110, 110, 110);
 }
 
@@ -141,9 +148,30 @@ main {
     color: var(--primary-color);
 }
 
+.delete-button-container {
+    top: 8px;
+    right: 8px;
+    position: absolute;
+}
 
+.delete-book-button {
+    aspect-ratio: 1;
+    width: 18px;
+    opacity: 0;
+    transition: .3s;
 
-.add-book-button {
+    color: rgb(70, 70, 70);
+}
+
+.book:hover .delete-book-button {
+    opacity: 1;
+}
+
+.delete-book-button:hover {
+    color: rgb(230, 11, 11);
+}
+
+#add-book-button {
     font-size: 2rem;
     color: var(--primary-color);
 
@@ -156,8 +184,90 @@ main {
 }
 
 
-.book.add-book-card:hover .add-book-button {
+.book.add-book-card:hover #add-book-button {
     background-color: var(--primary-color);
     color: rgb(255, 255, 255);  
 }
 
+
+.book-form-modal {
+    position: absolute;
+    top: 50%;  
+    left: 50%;
+    transform: translate(-50%, -70%);
+
+    /* height: 100%; */
+
+    border-radius: 20px;
+    border: none;
+
+    padding: 20px;
+}
+
+.book-form-modal::backdrop {
+    background: rgba(22, 22, 22, 0.801);
+}
+
+.modal-title {
+    font-family: var(--font-roboto-bold);
+    color: var(--primary-color);
+    align-self: center;
+}
+
+.book-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0px;
+}
+
+#book-form-submit {
+    font-family: var(--font-roboto-bold);
+    color: var(--primary-color);
+    align-self: center;
+}
+
+.book-form ul {
+    display: flex;
+    flex-direction: column;
+    gap: 15px 0px;
+}
+
+.book-form li {
+    display: flex;
+    flex-direction: column;
+}
+
+.book-form li:last-child {
+    flex-direction: row;
+    gap: 0px 5px;
+}
+
+.book-form li:last-child > input {
+    aspect-ratio: 1;
+    width: 18px;
+}
+
+.book-form label {
+    font-size: .8rem;
+    font-family: var(--font-roboto-bold);
+    color: var(--primary-color);
+}
+
+.book-form li > input {
+    font-size: 1.3rem;
+    border-radius: 5px;
+    border: solid 1px rgb(36, 36, 36);
+}
+
+#book-form-submit {
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: solid 1px var(--primary-color);
+
+    transition: 0.2s;
+}
+
+#book-form-submit:hover {
+    background-color: var(--primary-color);
+    color: rgb(255, 255, 255);  
+}

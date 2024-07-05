@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library</title>
     <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
 </head>
 <body>
     
@@ -17,9 +18,18 @@
         <div class="book-container">    
 
            <div class="book">
+                <div class="delete-button-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="delete-book-button" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </div>
                 <span class="book-status"></span>
                 <span class="book-title">Harry Potter and the Sorcerer's Stone</span>
                 <span class="book-author">Author</span>
+                <span class="number-of-page">297 pages</span>
                   
                 <div class="mark-as-read">
                     <label for="book-1">Mark as read</label>
@@ -27,10 +37,46 @@
                 </div>
            </div>   
 
-        <div class="book add-book-card">
-            <label for="add-book-button">ADD NEW BOOK</label>
-            <button class="add-book-button" id="add-book-button">+</button>
+            <div class="book add-book-card">
+                <label for="add-book-button">ADD NEW BOOK</label>
+                <button id="add-book-button">+</button>
+            </div>
+
+            <dialog class="book-form-modal">
+
+                <form class="book-form">
+                    <ul>
+                        <li class="modal-title">ADD NEW BOOK</li>
+
+                        <li>
+                            <label for="book-title">TITLE</label>
+                            <input type="text" name="bookTitle" id="book-title" required>
+                        </li>
+
+                        <li>
+                            <label for="book-author">AUTHOR</label>
+                            <input type="text" name="bookAuthor" id="book-author" required>
+                        </li>
+
+                        <li>
+                            <label for="book-page">NUMBER OF PAGE/S</label>
+                            <input type="number" name="bookPage" id="book-page" required>
+                        </li>
+
+                        <li>
+                            <label for="book-status">HAVE YOU READ IT?</label>
+                            <input type="checkbox" name="bookStatus" id="book-status">
+                        </li>
+
+                    </ul>
+
+                    <input type="submit" value="ADD" id="book-form-submit">
+                </form>
+
+            </dialog>
+        
         </div>
+       
     </main>
 
     <footer>
