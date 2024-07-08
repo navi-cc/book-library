@@ -1,4 +1,4 @@
-@import url('fonts/font.css');
+@import url('assets/fonts/font.css');
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -124,7 +124,6 @@ main {
     margin-bottom: 5px;
 }
 
-
 .mark-as-read {
     display: flex;
     gap: 0px 5px;
@@ -148,19 +147,21 @@ main {
     color: var(--primary-color);
 }
 
-.delete-button-container {
-    top: 8px;
-    right: 8px;
-    position: absolute;
-}
+
 
 .delete-book-button {
+    background-image: url('assets/icons/trash.svg');
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  
     aspect-ratio: 1;
     width: 18px;
     opacity: 0;
-    transition: 0.2s;
 
     color: rgb(70, 70, 70);
+
+    transition: 0.2s;
 }
 
 .book:hover .delete-book-button {
@@ -168,7 +169,7 @@ main {
 }
 
 .delete-book-button:hover {
-    color: rgb(230, 11, 11);
+    background-image: url('assets/icons/trash-red.svg');
 }
 
 #add-book-button {
@@ -195,8 +196,6 @@ main {
     top: 50%;  
     left: 50%;
     transform: translate(-50%, -70%);
-
-    /* height: 100%; */
 
     border-radius: 20px;
     border: none;
@@ -254,7 +253,8 @@ main {
 }
 
 .book-form li > input {
-    font-size: 1.3rem;
+    font-size: .9rem;
+    padding: 5px 5px;
     border-radius: 5px;
     border: solid 1px rgb(36, 36, 36);
 }
