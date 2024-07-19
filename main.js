@@ -25,8 +25,8 @@ const bookDetails = {
     author: null,
     status: null,
     numberOfPages: null,
-    markAsRead: null,
     deleteButton: null,
+    markAsRead: null,
 }
 
 const createElement = {
@@ -60,6 +60,13 @@ const createElement = {
         return pages;
     },
 
+    deleteButton: function() {
+        let deleteButton = document.createElement('div')
+        deleteButton.className = 'delete-book-button';
+
+        return deleteButton;
+    },
+    
     markAsRead: function(dataNumber = 0)  {
         let markAsRead = document.createElement('div');
         markAsRead.className = 'mark-as-read';
@@ -79,13 +86,6 @@ const createElement = {
 
         return markAsRead;
     },
-
-    deleteButton: function() {
-        let deleteButton = document.createElement('div')
-        deleteButton.className = 'delete-book-button';
-
-        return deleteButton;
-    } ,   
 }
 
 const userLibrary = {
@@ -93,12 +93,11 @@ const userLibrary = {
     books: [],
 };
 
-function Book(title, author, numberOfPages, readingStatus, position) {
+function Book(title, author, numberOfPages, readingStatus) {
     this.title = title;
     this.author = author;
     this.numberOfPages = numberOfPages;
     this.readingStatus = readingStatus;
-    this.position = position
 }
 
 
@@ -107,30 +106,46 @@ function setNewBook() {
     const userNewBook = new Book(inputTitleField.value, 
                         inputAuthorField.value, 
                         inputPageField.value,
-                        inputBookStatus.checked, 
-                        userLibrary.numberOfBooks);
+                        inputBookStatus.checked);
 
     userLibrary.numberOfBooks++;
     addNewBookToLibrary(userNewBook);
 }
 
+let previousInstance;
 function addNewBookToLibrary(userNewBook) {
-    userLibrary.books.push(userNewBook);
-    setElement();
-    bookContainer.insertBefore(bookDetails.book, addBookCard);
+    userLibrary.books.push(userNewBook)
+    userLibrary.books.map((book, currentInstance) => {
+        if (currentInstance === previousInstance) return;
+        setElement();
+      
+        bookDetails.book.setAttribute('data-instance', currentInstance);
+
+        bookDetails.title.textContent = book.title;
+        bookDetails.author.textContent = book.author;
+        bookDetails.numberOfPages.textContent = `${book.numberOfPages} page/s`;
+
+        bookDetails.markAsRead = createElement.markAsRead(currentInstance);
+ 
+        bookDetails.book.appendChild(bookDetails.markAsRead);
+        bookContainer.insertBefore(bookDetails.book, addBookCard);
+        
+        previousInstance = currentInstance;
+     });
+  
 }
 
 
 function setElement() {    
     Object.entries(createElement).map(([key, fn]) => {
+        if (key === 'markAsRead') return;
         bookDetails[key] = fn();
     });
 
     for (const key in bookDetails) {
-        if (key === 'book') continue;
+        if (key === 'book' || key === 'markAsRead') continue;
         bookDetails.book.appendChild(bookDetails[key]);
     }
-
 }
 
 function isInputFieldEmpty() {
