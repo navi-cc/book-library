@@ -19,6 +19,25 @@ submitBookModal.addEventListener('mousedown', () => {
 });
 
 
+let bookNodes;
+function setNodeList() {
+    let markAsReadButton = document.querySelectorAll('.mark-as-read > input');
+    bookNodes = document.querySelectorAll('.book');
+
+    markAsReadButton.forEach(element => {
+        element.addEventListener('input', (e) => {
+            let bookInstance = parseInt(e.target.parentNode.getAttribute('data-instance'))
+            let isChecked = e.target.checked;
+        
+            userLibrary.books.map(currentBook => {
+               if (userLibrary.books.indexOf(currentBook) != bookInstance) return;
+               currentBook.setReadingStatus(isChecked, bookInstance);
+            })
+
+        })
+    });
+}
+
 const bookDetails = {
     book: null,
     title: null,
@@ -67,9 +86,10 @@ const createElement = {
         return deleteButton;
     },
     
-    markAsRead: function(dataNumber = 0)  {
+    markAsRead: function(dataNumber)  {
         let markAsRead = document.createElement('div');
         markAsRead.className = 'mark-as-read';
+        markAsRead.setAttribute('data-instance', dataNumber)
 
         let label = document.createElement('label');
         dataNumber = dataNumber.toString();
@@ -100,9 +120,43 @@ function Book(title, author, numberOfPages, readingStatus) {
     this.readingStatus = readingStatus;
 }
 
+Book.prototype.setReadingStatus = function(isChecked, bookInstance, firstCall) {
+
+    let currentBookInstance;
+    let currentBook;
+    bookNodes.forEach(book => {
+        currentBookInstance =  book.getAttribute('data-instance')
+        if (bookInstance != currentBookInstance) return;
+        currentBook = book
+    });
+
+    if (firstCall && isChecked) {
+        currentBook.childNodes[5].lastChild.checked = true;
+        currentBook.childNodes[2].classList.add('finish')
+        return;
+    }
+
+    if (firstCall && !isChecked) {
+        currentBook.childNodes[5].lastChild.checked = false;
+        currentBook.childNodes[2].classList.add('pending')
+        return;
+    }
+
+    if (isChecked) {
+        this.readingStatus = true;
+        currentBook.childNodes[2].classList.add('finish')
+        currentBook.childNodes[2].classList.remove('pending')
+        return;
+    }
+
+    this.readingStatus = false;
+    currentBook.childNodes[2].classList.add('pending')
+    currentBook.childNodes[2].classList.remove('finish')
+}
+
+
 
 function setNewBook() {
-
     const userNewBook = new Book(inputTitleField.value, 
                         inputAuthorField.value, 
                         inputPageField.value,
@@ -111,28 +165,29 @@ function setNewBook() {
     userLibrary.numberOfBooks++;
     addNewBookToLibrary(userNewBook);
 }
-
-let previousInstance;
+ 
 function addNewBookToLibrary(userNewBook) {
     userLibrary.books.push(userNewBook)
     userLibrary.books.map((book, currentInstance) => {
-        if (currentInstance === previousInstance) return;
-        setElement();
-      
-        bookDetails.book.setAttribute('data-instance', currentInstance);
-
-        bookDetails.title.textContent = book.title;
-        bookDetails.author.textContent = book.author;
-        bookDetails.numberOfPages.textContent = `${book.numberOfPages} page/s`;
-
-        bookDetails.markAsRead = createElement.markAsRead(currentInstance);
- 
-        bookDetails.book.appendChild(bookDetails.markAsRead);
-        bookContainer.insertBefore(bookDetails.book, addBookCard);
         
-        previousInstance = currentInstance;
+        if (userLibrary.books.indexOf(userNewBook) != currentInstance) return;
+
+        setElement();
+        setBookNodeContent(book, currentInstance)
+        setNodeList()
+        book.setReadingStatus(book.readingStatus, currentInstance, true);
+
      });
-  
+}
+
+function setBookNodeContent(book, currentInstance) {
+    bookDetails.book.setAttribute('data-instance', currentInstance);
+    bookDetails.title.textContent = book.title;
+    bookDetails.author.textContent = book.author;
+    bookDetails.numberOfPages.textContent = `${book.numberOfPages} page/s`;
+    bookDetails.markAsRead = createElement.markAsRead(currentInstance);
+    bookDetails.book.appendChild(bookDetails.markAsRead);
+    bookContainer.insertBefore(bookDetails.book, addBookCard);
 }
 
 
