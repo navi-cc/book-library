@@ -19,14 +19,18 @@ submitBookModal.addEventListener('mousedown', () => {
 });
 
 
-let bookNodes;
+let bookNodes, markAsReadButton,
+deleteButton;
 function setNodeList() {
-    let markAsReadButton = document.querySelectorAll('.mark-as-read > input');
+    markAsReadButton = document.querySelectorAll('.mark-as-read > input');
+    deleteButton = document.querySelectorAll('.delete-book-button')
     bookNodes = document.querySelectorAll('.book');
+}
 
+function setNodeListener() {
     markAsReadButton.forEach(element => {
         element.addEventListener('input', (e) => {
-            let bookInstance = parseInt(e.target.parentNode.getAttribute('data-instance'))
+            let bookInstance = parseInt(e.target.closest('.book').getAttribute('data-instance'))
             let isChecked = e.target.checked;
         
             userLibrary.books.map(currentBook => {
@@ -36,6 +40,8 @@ function setNodeList() {
 
         })
     });
+
+    deleteButton.forEach(button => button.addEventListener('mousedown',removeBook));
 }
 
 const bookDetails = {
@@ -89,7 +95,6 @@ const createElement = {
     markAsRead: function(dataNumber)  {
         let markAsRead = document.createElement('div');
         markAsRead.className = 'mark-as-read';
-        markAsRead.setAttribute('data-instance', dataNumber)
 
         let label = document.createElement('label');
         dataNumber = dataNumber.toString();
@@ -99,7 +104,6 @@ const createElement = {
         let input = document.createElement('input');
         input.type = 'checkbox';
         input.id = dataNumber;
-
 
         markAsRead.appendChild(label)
         markAsRead.appendChild(input)
@@ -118,6 +122,7 @@ function Book(title, author, numberOfPages, readingStatus) {
     this.author = author;
     this.numberOfPages = numberOfPages;
     this.readingStatus = readingStatus;
+    this.bookPosition;
 }
 
 Book.prototype.setReadingStatus = function(isChecked, bookInstance, firstCall) {
@@ -174,7 +179,9 @@ function addNewBookToLibrary(userNewBook) {
 
         setElement();
         setBookNodeContent(book, currentInstance)
-        setNodeList()
+        setNodeList();
+        setNodeListener();  
+        book.bookPosition = currentInstance;
         book.setReadingStatus(book.readingStatus, currentInstance, true);
 
      });
@@ -201,6 +208,35 @@ function setElement() {
         if (key === 'book' || key === 'markAsRead') continue;
         bookDetails.book.appendChild(bookDetails[key]);
     }
+}
+
+function removeBook(e) {
+    let bookInstance = parseInt(e.target.parentNode.getAttribute('data-instance'));
+
+    userLibrary.books.map((book, bookNumber) => {
+        if (book.bookPosition != bookInstance) return;
+        userLibrary.books.splice(bookNumber, 1);
+    })
+
+    bookNodes.forEach(bookNode => {
+        let currentBookNode =  parseInt(bookNode.getAttribute('data-instance'))
+        if (bookInstance != currentBookNode) return;
+        bookContainer.removeChild(bookNode);
+    })
+
+    setNewDataInstance();
+}
+
+function setNewDataInstance() {
+    setNodeList()
+    userLibrary.books.map(book => book.bookPosition = userLibrary.books.indexOf(book));
+    bookNodes.forEach((bookNode, index) => {
+        let book = userLibrary.books[index];
+        bookNode.setAttribute('data-instance', book.bookPosition);
+        bookNode.childNodes[5].firstChild.setAttribute('for', book.bookPosition);
+        bookNode.childNodes[5].lastChild.id = book.bookPosition;
+    });
+    setNodeListener()
 }
 
 function isInputFieldEmpty() {
