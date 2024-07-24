@@ -64,7 +64,7 @@ main {
     gap: 40px 60px;
 }
 
-.book {
+.book, .add-book-card {
     display: flex;
     flex-direction: column;
 
@@ -79,7 +79,7 @@ main {
     transition: 0.3s;
 }
 
-.book::after {
+.book::after, .add-book-card::after {
     position: absolute;
     inset: 0;
 
@@ -102,8 +102,6 @@ main {
     aspect-ratio: 1;
     width: 10px;
     border-radius: 50px;
-    background-color: var(--status-finish-color);
-
 }
 
 .book-status.finish {
@@ -113,6 +111,7 @@ main {
 .book-status.pending {
     background-color: var(--status-pending-color);
 }
+
 
 .book-title {
     font-size: 1.2rem;
@@ -154,8 +153,9 @@ main {
     position: absolute;
     top: 8px;
     right: 8px;
-  
+    
     aspect-ratio: 1;
+    border-radius: 3px;
     width: 18px;
     opacity: 0;
 
@@ -169,6 +169,7 @@ main {
 }
 
 .delete-book-button:hover {
+    background-color: rgba(0, 0, 0, 0.199);
     background-image: url('assets/icons/trash-red.svg');
 }
 
@@ -185,7 +186,7 @@ main {
 }
 
 
-.book.add-book-card:hover #add-book-button {
+.add-book-card:hover #add-book-button {
     background-color: var(--primary-color);
     color: rgb(255, 255, 255);  
 }
