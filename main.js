@@ -11,38 +11,24 @@ let inputBookStatus = bookForm.querySelector('#book-status');
 
 
 submitBookModal.addEventListener('mousedown', () => {
-
     if (isInputFieldEmpty()) return;
     setNewBook();
     clearInputField();
-
 });
 
+document.addEventListener('mousedown', (e) => {
+    if (!e.target.contains(addBookModal)) return;
+    addBookModal.close();
+});
 
-let bookNodes, markAsReadButton,
-deleteButton;
-function setNodeList() {
-    markAsReadButton = document.querySelectorAll('.mark-as-read > input');
-    deleteButton = document.querySelectorAll('.delete-book-button')
-    bookNodes = document.querySelectorAll('.book');
-}
+addBookButton.addEventListener('mousedown', () => {
+    addBookModal.showModal();
+});
 
-function setNodeListener() {
-    markAsReadButton.forEach(element => {
-        element.addEventListener('input', (e) => {
-            let bookInstance = parseInt(e.target.closest('.book').getAttribute('data-instance'))
-            let isChecked = e.target.checked;
-        
-            userLibrary.books.map(currentBook => {
-               if (userLibrary.books.indexOf(currentBook) != bookInstance) return;
-               currentBook.setReadingStatus(isChecked, bookInstance);
-            })
+bookForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+});
 
-        })
-    });
-
-    deleteButton.forEach(button => button.addEventListener('mousedown',removeBook));
-}
 
 const bookDetails = {
     book: null,
@@ -88,7 +74,6 @@ const createElement = {
     deleteButton: function() {
         let deleteButton = document.createElement('div')
         deleteButton.className = 'delete-book-button';
-
         return deleteButton;
     },
     
@@ -107,7 +92,6 @@ const createElement = {
 
         markAsRead.appendChild(label)
         markAsRead.appendChild(input)
-
         return markAsRead;
     },
 }
@@ -126,7 +110,6 @@ function Book(title, author, numberOfPages, readingStatus) {
 }
 
 Book.prototype.setReadingStatus = function(isChecked, bookInstance, firstCall) {
-
     let currentBookInstance;
     let currentBook;
     bookNodes.forEach(book => {
@@ -158,8 +141,6 @@ Book.prototype.setReadingStatus = function(isChecked, bookInstance, firstCall) {
     currentBook.childNodes[2].classList.add('pending')
     currentBook.childNodes[2].classList.remove('finish')
 }
-
-
 
 function setNewBook() {
     const userNewBook = new Book(inputTitleField.value, 
@@ -197,7 +178,6 @@ function setBookNodeContent(book, currentInstance) {
     bookContainer.insertBefore(bookDetails.book, addBookCard);
 }
 
-
 function setElement() {    
     Object.entries(createElement).map(([key, fn]) => {
         if (key === 'markAsRead') return;
@@ -208,6 +188,30 @@ function setElement() {
         if (key === 'book' || key === 'markAsRead') continue;
         bookDetails.book.appendChild(bookDetails[key]);
     }
+}
+
+let bookNodes, markAsReadButton, deleteButton;
+function setNodeList() {
+    markAsReadButton = document.querySelectorAll('.mark-as-read > input');
+    deleteButton = document.querySelectorAll('.delete-book-button')
+    bookNodes = document.querySelectorAll('.book');
+}
+
+function setNodeListener() {
+    markAsReadButton.forEach(element => {
+        element.addEventListener('input', (e) => {
+            let bookInstance = parseInt(e.target.closest('.book').getAttribute('data-instance'))
+            let isChecked = e.target.checked;
+        
+            userLibrary.books.map(currentBook => {
+               if (userLibrary.books.indexOf(currentBook) != bookInstance) return;
+               currentBook.setReadingStatus(isChecked, bookInstance);
+            })
+
+        })
+    });
+
+    deleteButton.forEach(button => button.addEventListener('mousedown',removeBook));
 }
 
 function removeBook(e) {
@@ -249,45 +253,3 @@ function clearInputField() {
     inputPageField.value = '';
     inputBookStatus.checked = false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.addEventListener('mousedown', (e) => {
-    if (!e.target.contains(addBookModal)) return;
-    addBookModal.close();
-});
-
-addBookButton.addEventListener('mousedown', () => {
-    addBookModal.showModal();
-});
-
-bookForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-});
-
-
