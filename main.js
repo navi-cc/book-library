@@ -21,9 +21,9 @@ document.addEventListener('mousedown', (e) => {
     addBookModal.close();
 });
 
-addBookButton.addEventListener('mousedown', () => {
-    addBookModal.showModal();
-});
+// addBookButton.addEventListener('mousedown', () => {
+//     addBookModal.showModal();
+// });
 
 bookForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -96,86 +96,77 @@ const createElement = {
     },
 }
 
-const userLibrary = {
-    numberOfBooks: 0,
-    books: [],
-};
+class Library {
+    constructor() {
+        this.books = [];
+        this.bookNode = getBookNode();
+    }
 
-function Book(title, author, numberOfPages, readingStatus) {
-    this.title = title;
-    this.author = author;
-    this.numberOfPages = numberOfPages;
-    this.readingStatus = readingStatus;
-    this.bookPosition;
+    setBook(title, 
+            author,
+            numberOfPages, 
+            readingStatus)
+    {
+       return {title, author, numberOfPages, readingStatus}
+    }
+
+    addBook(book) {
+       this.books.push(book);
+       render()
+    }
+
+    removeBook(target) {
+       const removedBookNumber = parseInt(target.parentNode.dataset.instance);
+       this.books.splice(removedBookNumber, 1);
+       render()
+    }
+
+    setReadingStatus(isChecked, bookNumber)  {
+        if (isChecked) {
+            this.books[bookNumber].readingStatus = true
+            this.bookNode[bookNumber].childNodes[5].lastChild.checked = true
+            this.bookNode[bookNumber].childNodes[2].classList.add('finish')
+            this.bookNode[bookNumber].childNodes[2].classList.remove('pending')
+        }
+
+        if (!isChecked) {
+            this.books[bookNumber].readingStatus = false
+            this.bookNode[bookNumber].childNodes[2].classList.add('pending')
+            this.bookNode[bookNumber].childNodes[2].classList.remove('finish')
+        }
+    }
+    
 }
 
-Book.prototype.setReadingStatus = function(isChecked, bookInstance, firstCall) {
-    let currentBookInstance;
-    let currentBook;
-    bookNodes.forEach(book => {
-        currentBookInstance =  book.getAttribute('data-instance')
-        if (bookInstance != currentBookInstance) return;
-        currentBook = book
-    });
+const library = new Library();
 
-    if (firstCall && isChecked) {
-        currentBook.childNodes[5].lastChild.checked = true;
-        currentBook.childNodes[2].classList.add('finish')
-        return;
-    }
 
-    if (firstCall && !isChecked) {
-        currentBook.childNodes[5].lastChild.checked = false;
-        currentBook.childNodes[2].classList.add('pending')
-        return;
-    }
+function setNewBook(inputTitleField, inputAuthorField, inputPageField, inputBookStatus) {
+    const book = library.setBook(inputTitleField, 
+                                inputAuthorField, 
+                                inputPageField, 
+                                inputBookStatus)
 
-    if (isChecked) {
-        this.readingStatus = true;
-        currentBook.childNodes[2].classList.add('finish')
-        currentBook.childNodes[2].classList.remove('pending')
-        return;
-    }
-
-    this.readingStatus = false;
-    currentBook.childNodes[2].classList.add('pending')
-    currentBook.childNodes[2].classList.remove('finish')
-}
-
-function setNewBook() {
-    const userNewBook = new Book(inputTitleField.value, 
-                        inputAuthorField.value, 
-                        inputPageField.value,
-                        inputBookStatus.checked);
-
-    userLibrary.numberOfBooks++;
-    addNewBookToLibrary(userNewBook);
+    library.addBook(book);
 }
  
-function addNewBookToLibrary(userNewBook) {
-    userLibrary.books.push(userNewBook)
-    userLibrary.books.map((book, currentInstance) => {
-        
-        if (userLibrary.books.indexOf(userNewBook) != currentInstance) return;
-
+function render() {
+    bookContainer.textContent = ''
+    library.books.map((book, bookNumber) => {
         setElement();
-        setBookNodeContent(book, currentInstance)
-        setNodeList();
-        setNodeListener();  
-        book.bookPosition = currentInstance;
-        book.setReadingStatus(book.readingStatus, currentInstance, true);
-
-     });
+        setBookNodeContent(book, bookNumber)
+    })
 }
 
-function setBookNodeContent(book, currentInstance) {
-    bookDetails.book.setAttribute('data-instance', currentInstance);
+function setBookNodeContent(book, bookNumber) {
+    bookDetails.book.setAttribute('data-instance', bookNumber);
     bookDetails.title.textContent = book.title;
     bookDetails.author.textContent = book.author;
     bookDetails.numberOfPages.textContent = `${book.numberOfPages} page/s`;
-    bookDetails.markAsRead = createElement.markAsRead(currentInstance);
+    bookDetails.markAsRead = createElement.markAsRead(bookNumber);
     bookDetails.book.appendChild(bookDetails.markAsRead);
-    bookContainer.insertBefore(bookDetails.book, addBookCard);
+    bookContainer.appendChild(bookDetails.book);
+    library.setReadingStatus(book.readingStatus, bookNumber)
 }
 
 function setElement() {    
@@ -188,59 +179,6 @@ function setElement() {
         if (key === 'book' || key === 'markAsRead') continue;
         bookDetails.book.appendChild(bookDetails[key]);
     }
-}
-
-let bookNodes, markAsReadButton, deleteButton;
-function setNodeList() {
-    markAsReadButton = document.querySelectorAll('.mark-as-read > input');
-    deleteButton = document.querySelectorAll('.delete-book-button')
-    bookNodes = document.querySelectorAll('.book');
-}
-
-function setNodeListener() {
-    markAsReadButton.forEach(element => {
-        element.addEventListener('input', (e) => {
-            let bookInstance = parseInt(e.target.closest('.book').getAttribute('data-instance'))
-            let isChecked = e.target.checked;
-        
-            userLibrary.books.map(currentBook => {
-               if (userLibrary.books.indexOf(currentBook) != bookInstance) return;
-               currentBook.setReadingStatus(isChecked, bookInstance);
-            })
-
-        })
-    });
-
-    deleteButton.forEach(button => button.addEventListener('mousedown',removeBook));
-}
-
-function removeBook(e) {
-    let bookInstance = parseInt(e.target.parentNode.getAttribute('data-instance'));
-
-    userLibrary.books.map((book, bookNumber) => {
-        if (book.bookPosition != bookInstance) return;
-        userLibrary.books.splice(bookNumber, 1);
-    })
-
-    bookNodes.forEach(bookNode => {
-        let currentBookNode =  parseInt(bookNode.getAttribute('data-instance'))
-        if (bookInstance != currentBookNode) return;
-        bookContainer.removeChild(bookNode);
-    })
-
-    setNewDataInstance();
-}
-
-function setNewDataInstance() {
-    setNodeList()
-    userLibrary.books.map(book => book.bookPosition = userLibrary.books.indexOf(book));
-    bookNodes.forEach((bookNode, index) => {
-        let book = userLibrary.books[index];
-        bookNode.setAttribute('data-instance', book.bookPosition);
-        bookNode.childNodes[5].firstChild.setAttribute('for', book.bookPosition);
-        bookNode.childNodes[5].lastChild.id = book.bookPosition;
-    });
-    setNodeListener()
 }
 
 function isInputFieldEmpty() {
