@@ -191,3 +191,22 @@ function clearInputField() {
     inputPageField.value = '';
     inputBookStatus.checked = false;
 }
+
+function getBookNode() {
+    return document.getElementsByClassName('book'); 
+}
+
+function libraryHandler(e) {
+    const target = e.target;
+        
+    if (target.className === 'delete-book-button') {
+        library.removeBook(target)
+        return
+    }
+
+    if (target.nodeName === 'INPUT') {
+        library.setReadingStatus(target.checked, parseInt(target.parentNode.parentNode.dataset.instance)) 
+    }    
+}
+
+bookContainer.onclick = libraryHandler;
