@@ -1,5 +1,4 @@
 const bookContainer = document.querySelector('.book-container');
-const addBookCard = document.querySelector('.add-book-card');
 const addBookModal = document.querySelector('.book-form-modal');
 const submitBookModal = document.querySelector('#book-form-submit');
 const bookForm = document.querySelector('.book-form');
@@ -8,27 +7,6 @@ let inputTitleField = bookForm.querySelector('#book-title');
 let inputAuthorField = bookForm.querySelector('#book-author');
 let inputPageField = bookForm.querySelector('#book-page');
 let inputBookStatus = bookForm.querySelector('#book-status');
-
-
-submitBookModal.addEventListener('mousedown', () => {
-    if (isInputFieldEmpty()) return;
-    setNewBook();
-    clearInputField();
-});
-
-document.addEventListener('mousedown', (e) => {
-    if (!e.target.contains(addBookModal)) return;
-    addBookModal.close();
-});
-
-// addBookButton.addEventListener('mousedown', () => {
-//     addBookModal.showModal();
-// });
-
-bookForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-});
-
 
 const bookDetails = {
     book: null,
@@ -140,12 +118,11 @@ class Library {
 
 const library = new Library();
 
-
-function setNewBook(inputTitleField, inputAuthorField, inputPageField, inputBookStatus) {
-    const book = library.setBook(inputTitleField, 
-                                inputAuthorField, 
-                                inputPageField, 
-                                inputBookStatus)
+function addNewBook() {
+    const book = library.setBook(inputTitleField.value, 
+                                inputAuthorField.value, 
+                                inputPageField.value, 
+                                inputBookStatus.checked)
 
     library.addBook(book);
 }
@@ -185,15 +162,25 @@ function isInputFieldEmpty() {
     return !inputTitleField.value || !inputAuthorField.value || !inputPageField.value
 }
 
-function clearInputField() {
-    inputTitleField.value = '';
-    inputAuthorField.value = '';
-    inputPageField.value = '';
-    inputBookStatus.checked = false;
-}
-
 function getBookNode() {
     return document.getElementsByClassName('book'); 
+}
+
+function createAddBookCard() {
+    addBookCard.node = addBookCard.create()
+    bookContainer.appendChild(addBookCard.node)
+}
+
+function closeModal(e) {
+    if (e.target.contains(addBookModal)) addBookModal.close()
+}
+
+function bookFormHandler(e) {
+    if (isInputFieldEmpty()) return;
+    addNewBook();
+    bookForm.reset()
+    addBookModal.close()
+    e.preventDefault();
 }
 
 function libraryHandler(e) {
@@ -210,3 +197,5 @@ function libraryHandler(e) {
 }
 
 bookContainer.onclick = libraryHandler;
+bookForm.onsubmit = bookFormHandler;
+window.onmousedown = closeModal;
