@@ -18,6 +18,28 @@ const bookDetails = {
     markAsRead: null,
 }
 
+const addBookCard = {
+    node: null,
+    create: function () {
+        let addBookCard = document.createElement('div');
+        let label = document.createElement('label');
+        let button = document.createElement('button');
+
+        addBookCard.className = 'add-book-card'
+
+        label.setAttribute('for', 'add-book-button')
+        label.textContent = 'ADD NEW BOOK'
+
+        button.id = 'add-book-button'
+        button.textContent = '+'
+
+        addBookCard.appendChild(label)
+        addBookCard.appendChild(button)
+
+        return addBookCard
+    }
+}
+
 const createElement = {
     book: function() {
         let book =  document.createElement('div');
@@ -129,9 +151,11 @@ function addNewBook() {
  
 function render() {
     bookContainer.textContent = ''
+    bookContainer.appendChild(addBookCard.create());
     library.books.map((book, bookNumber) => {
         setElement();
         setBookNodeContent(book, bookNumber)
+        library.setReadingStatus(book.readingStatus, bookNumber)
     })
 }
 
@@ -142,11 +166,10 @@ function setBookNodeContent(book, bookNumber) {
     bookDetails.numberOfPages.textContent = `${book.numberOfPages} page/s`;
     bookDetails.markAsRead = createElement.markAsRead(bookNumber);
     bookDetails.book.appendChild(bookDetails.markAsRead);
-    bookContainer.appendChild(bookDetails.book);
-    library.setReadingStatus(book.readingStatus, bookNumber)
+    bookContainer.insertBefore(bookDetails.book, bookContainer.lastChild);
 }
 
-function setElement() {    
+function setElement() {     
     Object.entries(createElement).map(([key, fn]) => {
         if (key === 'markAsRead') return;
         bookDetails[key] = fn();
@@ -166,11 +189,6 @@ function getBookNode() {
     return document.getElementsByClassName('book'); 
 }
 
-function createAddBookCard() {
-    addBookCard.node = addBookCard.create()
-    bookContainer.appendChild(addBookCard.node)
-}
-
 function closeModal(e) {
     if (e.target.contains(addBookModal)) addBookModal.close()
 }
@@ -185,7 +203,12 @@ function bookFormHandler(e) {
 
 function libraryHandler(e) {
     const target = e.target;
-        
+    
+    if (target.parentNode.className === 'add-book-card') {
+        addBookModal.showModal()
+        return
+    }
+
     if (target.className === 'delete-book-button') {
         library.removeBook(target)
         return
@@ -199,3 +222,4 @@ function libraryHandler(e) {
 bookContainer.onclick = libraryHandler;
 bookForm.onsubmit = bookFormHandler;
 window.onmousedown = closeModal;
+window.onload = () => bookContainer.appendChild(addBookCard.create());
