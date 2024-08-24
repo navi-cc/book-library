@@ -15,53 +15,42 @@
     </header>
 
     <main>
-        <div class="book-container">      
-            
-            <div class="add-book-card">
-                <label for="add-book-button">ADD NEW BOOK</label>
-                <button id="add-book-button">+</button>
-            </div>
+        <div class="book-container"></div>
+        <dialog class="book-form-modal">
 
-            <dialog class="book-form-modal">
+            <form class="book-form">
+                <ul>
+                    <li class="modal-title">ADD NEW BOOK</li>
 
-                <form class="book-form">
-                    <ul>
-                        <li class="modal-title">ADD NEW BOOK</li>
+                    <li>
+                        <label for="book-title">TITLE</label>
+                        <input type="text" name="bookTitle" id="book-title" required>
+                    </li>
 
-                        <li>
-                            <label for="book-title">TITLE</label>
-                            <input type="text" name="bookTitle" id="book-title" required>
-                        </li>
+                    <li>
+                        <label for="book-author">AUTHOR</label>
+                        <input type="text" name="bookAuthor" id="book-author" required>
+                    </li>
 
-                        <li>
-                            <label for="book-author">AUTHOR</label>
-                            <input type="text" name="bookAuthor" id="book-author" required>
-                        </li>
+                    <li>
+                        <label for="book-page">NUMBER OF PAGE/S</label>
+                        <input type="number" name="bookPage" id="book-page" required>
+                    </li>
 
-                        <li>
-                            <label for="book-page">NUMBER OF PAGE/S</label>
-                            <input type="number" name="bookPage" id="book-page" required>
-                        </li>
+                    <li>
+                        <label for="book-status">HAVE YOU READ IT?</label>
+                        <input type="checkbox" name="bookStatus" id="book-status">
+                    </li>
 
-                        <li>
-                            <label for="book-status">HAVE YOU READ IT?</label>
-                            <input type="checkbox" name="bookStatus" id="book-status">
-                        </li>
+                </ul>
 
-                    </ul>
+                <input type="submit" value="ADD" id="book-form-submit">
+            </form>
 
-                    <input type="submit" value="ADD" id="book-form-submit">
-                </form>
-
-            </dialog>
-        
-        </div>
+        </dialog>
        
     </main>
 
-    <footer>
-       
-    </footer>
-
+    <footer></footer>
 </body>
 </html>
